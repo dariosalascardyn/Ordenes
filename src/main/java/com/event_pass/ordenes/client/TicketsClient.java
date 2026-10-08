@@ -23,21 +23,37 @@ public class TicketsClient {
     @Value("${servicios.tickets.url:http://localhost:8083}")
     private String ticketsUrl;
 
+    // public List<TicketDTO> emitirTickets(Long ordenId, Long usuarioId, Long eventoId, Integer cantidad) {
+    //     String url = ticketsUrl + "/interno/tickets";
+    //     TicketEmisionRequestDTO request = new TicketEmisionRequestDTO(ordenId, usuarioId, eventoId, cantidad);
+
+    //     try {
+    //         ResponseEntity<EmisionTicketsResponseDTO> response = restTemplate.postForEntity(
+    //                 url, request, EmisionTicketsResponseDTO.class
+    //         );
+
+    //         if (response.getBody() != null && response.getBody().getTickets() != null) {
+    //             return response.getBody().getTickets();
+    //         }
+    //     } catch (Exception e) {
+    //         System.out.println("Error de conexion con microservicio Tickets: " + e.getMessage());
+    //     }
+    //     return Collections.emptyList();
+    // }
+
+
+    // Simulación local de respuesta de tickets para porbar en postmaaan
     public List<TicketDTO> emitirTickets(Long ordenId, Long usuarioId, Long eventoId, Integer cantidad) {
-        String url = ticketsUrl + "/interno/tickets";
-        TicketEmisionRequestDTO request = new TicketEmisionRequestDTO(ordenId, usuarioId, eventoId, cantidad);
+    
+        TicketDTO t1 = new TicketDTO();
+        t1.setTicketId(3001L);
+        t1.setCodigo("EVP-A81K");
 
-        try {
-            ResponseEntity<EmisionTicketsResponseDTO> response = restTemplate.postForEntity(
-                    url, request, EmisionTicketsResponseDTO.class
-            );
+        TicketDTO t2 = new TicketDTO();
+        t2.setTicketId(3002L);
+        t2.setCodigo("EVP-B92M");
 
-            if (response.getBody() != null && response.getBody().getTickets() != null) {
-                return response.getBody().getTickets();
-            }
-        } catch (Exception e) {
-            System.out.println("Error de conexion con microservicio Tickets: " + e.getMessage());
-        }
-        return Collections.emptyList();
+        return List.of(t1, t2);
     }
+
 }

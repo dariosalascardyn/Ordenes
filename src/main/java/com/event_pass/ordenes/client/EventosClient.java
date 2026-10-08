@@ -21,17 +21,24 @@ public class EventosClient {
     @Value("${servicios.eventos.url:http://localhost:8081}")
     private String eventosUrl;
 
+    // public boolean reservarAforo(Long eventoId, Long ordenId, Integer cantidad) {
+    //     String url = eventosUrl + "/interno/eventos/" + eventoId + "/reservas";
+    //     ReservaRequestDTO request = new ReservaRequestDTO(ordenId, cantidad);
+    //     try {
+    //         ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+    //         return response.getStatusCode().is2xxSuccessful();
+    //     } catch (HttpClientErrorException e) {
+    //         // Si responde 409 Conflict, no hay aforo suficiente segun el contrato
+    //         return false;
+    //     } catch (Exception e) { // Otros errores
+    //         return false; 
+    //     }
+    // }
+
+
+    // Simulación local exitosa para postmann
     public boolean reservarAforo(Long eventoId, Long ordenId, Integer cantidad) {
-        String url = eventosUrl + "/interno/eventos/" + eventoId + "/reservas";
-        ReservaRequestDTO request = new ReservaRequestDTO(ordenId, cantidad);
-        try {
-            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-            return response.getStatusCode().is2xxSuccessful();
-        } catch (HttpClientErrorException e) {
-            // Si responde 409 Conflict, no hay aforo suficiente segun el contrato
-            return false;
-        } catch (Exception e) { // Otros errores
-            return false; 
-        }
-    }
+    
+    return true; 
+}
 }
