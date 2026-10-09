@@ -1,44 +1,41 @@
 package com.event_pass.ordenes.client;
 
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.event_pass.ordenes.dto.ReservaRequestDTO;
+import com.event_pass.ordenes.exception.ServicioExternoException;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor 
+@RequiredArgsConstructor
 public class EventosClient {
 
     private final RestTemplate restTemplate;
 
-    // Asumimos que Eventos = puerto 8081 localmente
-    @Value("${servicios.eventos.url:http://localhost:8081}")
+    @Value("${servicios.eventos.url:http://localhost:8084}")
     private String eventosUrl;
 
-    // public boolean reservarAforo(Long eventoId, Long ordenId, Integer cantidad) {
-    //     String url = eventosUrl + "/interno/eventos/" + eventoId + "/reservas";
-    //     ReservaRequestDTO request = new ReservaRequestDTO(ordenId, cantidad);
-    //     try {
-    //         ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-    //         return response.getStatusCode().is2xxSuccessful();
-    //     } catch (HttpClientErrorException e) {
-    //         // Si responde 409 Conflict, no hay aforo suficiente segun el contrato
-    //         return false;
-    //     } catch (Exception e) { // Otros errores
-    //         return false; 
-    //     }
-    // }
-
-
-    // Simulación local exitosa para postmann
     public boolean reservarAforo(Long eventoId, Long ordenId, Integer cantidad) {
-    
-    return true; 
-}
+        String url = eventosUrl + "/interno/eventos/" + eventoId + "/reservas";
+        ReservaRequestDTO request = new ReservaRequestDTO(ordenId, cantidad);
+
+        try {
+            return restTemplate.postForEntity(url, request, String.class)
+                .getStatusCode()
+                .is2xxSuccessful();
+        } catch (HttpStatusCodeException exception) {
+            if (exception.getStatusCode() == HttpStatus.CONFLICT) {
+                return false;
+            }
+            throw new ServicioExternoException("ERROR_RESERVA_EVENTOS", exception);
+        } catch (RestClientException exception) {
+            throw new ServicioExternoException("ERROR_RESERVA_EVENTOS", exception);
+        }
+    }
 }
