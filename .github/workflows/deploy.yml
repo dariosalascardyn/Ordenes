@@ -8,6 +8,21 @@ jobs:
   ci-build-and-test:
     name: Build, Test & Artifact - Órdenes
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: db_ordenes
+          MYSQL_USER: ordenes_ci
+          MYSQL_PASSWORD: ordenes_ci_password
+          MYSQL_ROOT_PASSWORD: root_ci_password
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot_ci_password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: Descargar codigo del repositorio
@@ -22,6 +37,11 @@ jobs:
 
       - name: Ejecutar pruebas unitarias (JUnit)
         run: ./mvnw test
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3307/db_ordenes?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+          SPRING_DATASOURCE_USERNAME: ordenes_ci
+          SPRING_DATASOURCE_PASSWORD: ordenes_ci_password
+          JWT_SECRET_BASE64: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
 
       - name: Empaquetar aplicacion (.jar)
         run: ./mvnw package -DskipTests
